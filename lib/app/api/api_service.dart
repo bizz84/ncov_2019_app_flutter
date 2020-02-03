@@ -22,14 +22,67 @@ class APIService {
       }
       // else expired?
     }
-    // TODO: Proper error handling
-    throw response.statusCode;
+    print(
+        'Request ${api.token()} failed\nResponse: ${response.statusCode} ${response.reasonPhrase}');
+
+    throw response;
   }
 
-  // TODO: Stats and other endpoints
-  Future<int> getCases({@required String token}) async {
+  Future<int> getData(
+      {@required String token, @required Endpoint endpoint}) async {
+    switch (endpoint) {
+      case Endpoint.cases:
+        return await getCases(token: token);
+      case Endpoint.casesSuspected:
+        return await getCasesSuspected(token: token);
+      case Endpoint.casesConfirmed:
+        return await getCasesConfirmed(token: token);
+      case Endpoint.deaths:
+        return await getDeaths(token: token);
+      case Endpoint.recovered:
+        return await getRecovered(token: token);
+    }
+    return null;
+  }
+
+  Future<int> getCases({@required String token}) async => await getValue(
+        uri: api.cases(),
+        token: token,
+        responseJsonKey: 'cases',
+      );
+
+  Future<int> getCasesSuspected({@required String token}) async =>
+      await getValue(
+        uri: api.casesSuspected(),
+        token: token,
+        responseJsonKey: 'data',
+      );
+
+  Future<int> getCasesConfirmed({@required String token}) async =>
+      await getValue(
+        uri: api.casesConfirmed(),
+        token: token,
+        responseJsonKey: 'data',
+      );
+
+  Future<int> getDeaths({@required String token}) async => await getValue(
+        uri: api.deaths(),
+        token: token,
+        responseJsonKey: 'data',
+      );
+
+  Future<int> getRecovered({@required String token}) async => await getValue(
+        uri: api.recovered(),
+        token: token,
+        responseJsonKey: 'data',
+      );
+
+  Future<int> getValue(
+      {@required Uri uri,
+      @required String token,
+      @required String responseJsonKey}) async {
     final response = await http.get(
-      api.cases().toString(),
+      uri.toString(),
       headers: {'Authorization': 'Bearer $token'},
     );
     if (response.statusCode == 200) {
@@ -37,16 +90,14 @@ class APIService {
       print('$data');
       if (data.isNotEmpty) {
         final Map<String, dynamic> items = data[0];
-        final int cases = items['cases'];
-        if (cases != null) {
-          return cases;
+        final int result = items[responseJsonKey];
+        if (result != null) {
+          return result;
         }
       }
     }
-    if (response.statusCode == 401) {
-      print('401 Unauthorized');
-    }
-    // TODO: Proper error handling
-    throw response.statusCode;
+    print(
+        'Request $uri failed\nResponse: ${response.statusCode} ${response.reasonPhrase}');
+    throw response;
   }
 }
