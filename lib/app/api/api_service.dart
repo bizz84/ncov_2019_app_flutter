@@ -10,7 +10,7 @@ class APIService {
 
   Future<String> getToken() async {
     final response = await http.post(
-      api.token().toString(),
+      api.tokenUri().toString(),
       headers: {'Authorization': 'Basic ${api.apiKey}'},
     );
     if (response.statusCode == 200) {
@@ -23,69 +23,22 @@ class APIService {
       // else expired?
     }
     print(
-        'Request ${api.token()} failed\nResponse: ${response.statusCode} ${response.reasonPhrase}');
+        'Request ${api.tokenUri()} failed\nResponse: ${response.statusCode} ${response.reasonPhrase}');
 
     throw response;
   }
 
-  Future<int> getData(
-      {@required String token, @required Endpoint endpoint}) async {
-    switch (endpoint) {
-      case Endpoint.cases:
-        return await getCases(token: token);
-      case Endpoint.casesSuspected:
-        return await getCasesSuspected(token: token);
-      case Endpoint.casesConfirmed:
-        return await getCasesConfirmed(token: token);
-      case Endpoint.deaths:
-        return await getDeaths(token: token);
-      case Endpoint.recovered:
-        return await getRecovered(token: token);
-    }
-    return null;
-  }
-
-  Future<int> getCases({@required String token}) async => await getValue(
-        uri: api.cases(),
-        token: token,
-        responseJsonKey: 'cases',
-      );
-
-  Future<int> getCasesSuspected({@required String token}) async =>
-      await getValue(
-        uri: api.casesSuspected(),
-        token: token,
-        responseJsonKey: 'data',
-      );
-
-  Future<int> getCasesConfirmed({@required String token}) async =>
-      await getValue(
-        uri: api.casesConfirmed(),
-        token: token,
-        responseJsonKey: 'data',
-      );
-
-  Future<int> getDeaths({@required String token}) async => await getValue(
-        uri: api.deaths(),
-        token: token,
-        responseJsonKey: 'data',
-      );
-
-  Future<int> getRecovered({@required String token}) async => await getValue(
-        uri: api.recovered(),
-        token: token,
-        responseJsonKey: 'data',
-      );
-
-  Future<int> getValue(
-      {@required Uri uri,
-      @required String token,
-      @required String responseJsonKey}) async {
+  Future<int> getEndpointData({
+    @required String token,
+    @required Endpoint endpoint,
+  }) async {
+    final uri = api.endpointUri(endpoint);
     final response = await http.get(
       uri.toString(),
       headers: {'Authorization': 'Bearer $token'},
     );
     if (response.statusCode == 200) {
+      final responseJsonKey = _responseJsonKeys[endpoint];
       final List<dynamic> data = json.decode(response.body);
       print('$data');
       if (data.isNotEmpty) {
@@ -100,4 +53,12 @@ class APIService {
         'Request $uri failed\nResponse: ${response.statusCode} ${response.reasonPhrase}');
     throw response;
   }
+
+  static Map<Endpoint, String> _responseJsonKeys = {
+    Endpoint.cases: 'cases',
+    Endpoint.casesSuspected: 'data',
+    Endpoint.casesConfirmed: 'data',
+    Endpoint.deaths: 'data',
+    Endpoint.recovered: 'data',
+  };
 }

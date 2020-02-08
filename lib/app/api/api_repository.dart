@@ -22,20 +22,24 @@ class APIRepository {
 
   String _token;
 
-  Future<int> getData(Endpoint endpoint) async {
+  /// Get data for a single endpoint
+  Future<int> getEndpointData(Endpoint endpoint) async {
     if (_token == null) {
       _token = await apiService.getToken();
     }
     try {
-      return await apiService.getData(token: _token, endpoint: endpoint);
+      return await apiService.getEndpointData(
+          token: _token, endpoint: endpoint);
     } catch (e) {
       // if unauthorized, get token again
       _token = await apiService.getToken();
-      return await apiService.getData(token: _token, endpoint: endpoint);
+      return await apiService.getEndpointData(
+          token: _token, endpoint: endpoint);
     }
   }
 
-  Future<Data> getAllData() async {
+  /// Get data for all endpoints
+  Future<Data> getAllEndpointsData() async {
     if (_token == null) {
       _token = await apiService.getToken();
     }
@@ -50,11 +54,13 @@ class APIRepository {
 
   Future<Data> _getAllData() async {
     final results = await Future.wait([
-      apiService.getData(token: _token, endpoint: Endpoint.cases),
-      apiService.getData(token: _token, endpoint: Endpoint.casesSuspected),
-      apiService.getData(token: _token, endpoint: Endpoint.casesConfirmed),
-      apiService.getData(token: _token, endpoint: Endpoint.deaths),
-      apiService.getData(token: _token, endpoint: Endpoint.recovered),
+      apiService.getEndpointData(token: _token, endpoint: Endpoint.cases),
+      apiService.getEndpointData(
+          token: _token, endpoint: Endpoint.casesSuspected),
+      apiService.getEndpointData(
+          token: _token, endpoint: Endpoint.casesConfirmed),
+      apiService.getEndpointData(token: _token, endpoint: Endpoint.deaths),
+      apiService.getEndpointData(token: _token, endpoint: Endpoint.recovered),
     ]);
     return Data(values: {
       Endpoint.cases: results[0],

@@ -9,10 +9,17 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
+  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   Data _data;
+
+  static Map<Endpoint, String> _titles = {
+    Endpoint.cases: 'Cases',
+    Endpoint.casesSuspected: 'Suspected cases',
+    Endpoint.casesConfirmed: 'Confirmed cases',
+    Endpoint.deaths: 'Deaths',
+    Endpoint.recovered: 'Recovered',
+  };
 
   @override
   void initState() {
@@ -20,23 +27,20 @@ class _DashboardState extends State<Dashboard> {
     _updateData();
   }
 
-  static Map<Endpoint, String> _titles = {
-    Endpoint.cases: 'Cases',
-    Endpoint.casesSuspected: 'Cases suspected',
-    Endpoint.casesConfirmed: 'Cases confirmed',
-    Endpoint.deaths: 'Deaths',
-    Endpoint.recovered: 'Recovered',
-  };
-
   Future<void> _refresh() async {
     _refreshIndicatorKey.currentState.show();
-    _updateData();
+    await _updateData();
   }
 
   Future<void> _updateData() async {
-    final apiRepository = Provider.of<APIRepository>(context, listen: false);
-    final data = await apiRepository.getAllData();
-    setState(() => _data = data);
+    try {
+      final apiRepository = Provider.of<APIRepository>(context, listen: false);
+      final data = await apiRepository.getAllEndpointsData();
+      setState(() => _data = data);
+    } catch (e) {
+      // TODO: Show alert
+      print(e);
+    }
   }
 
   @override
