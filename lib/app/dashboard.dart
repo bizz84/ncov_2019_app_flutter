@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ncov_2019_app_flutter/app/api/api.dart';
 import 'package:ncov_2019_app_flutter/app/api/api_repository.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ class _DashboardState extends State<Dashboard> {
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   Data _data;
+  DateTime _lastUpdated;
 
   static Map<Endpoint, String> _titles = {
     Endpoint.cases: 'Cases',
@@ -36,11 +38,20 @@ class _DashboardState extends State<Dashboard> {
     try {
       final apiRepository = Provider.of<APIRepository>(context, listen: false);
       final data = await apiRepository.getAllEndpointsData();
-      setState(() => _data = data);
+      setState(() {
+        _data = data;
+        _lastUpdated = DateTime.now();
+      });
     } catch (e) {
       // TODO: Show alert
       print(e);
     }
+  }
+
+  String _formatLastUpdated(DateTime date) {
+    final formatter = DateFormat.jms();
+    final formatted = formatter.format(date);
+    return 'Last updated: $formatted';
   }
 
   @override
@@ -54,6 +65,8 @@ class _DashboardState extends State<Dashboard> {
         onRefresh: _refresh,
         child: ListView(
           children: [
+            if (_lastUpdated != null)
+              LastUpdatedLabel(labelText: _formatLastUpdated(_lastUpdated)),
             for (var endpoint in Endpoint.values)
               APIResultCard(
                 title: _titles[endpoint],
@@ -61,6 +74,22 @@ class _DashboardState extends State<Dashboard> {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class LastUpdatedLabel extends StatelessWidget {
+  const LastUpdatedLabel({Key key, this.labelText}) : super(key: key);
+  final String labelText;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        labelText,
+        textAlign: TextAlign.center,
       ),
     );
   }
