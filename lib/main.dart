@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
     return Provider<APIRepository>(
       create: (_) => APIRepository(APIService(API.production())),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData.dark(),
         home: Dashboard(),
