@@ -4,6 +4,12 @@ import 'package:ncov_2019_app_flutter/app/api/api.dart';
 import 'package:ncov_2019_app_flutter/app/api/api_repository.dart';
 import 'package:provider/provider.dart';
 
+class CardData {
+  CardData(this.title, this.assetName);
+  final String title;
+  final String assetName;
+}
+
 class Dashboard extends StatefulWidget {
   @override
   _DashboardState createState() => _DashboardState();
@@ -15,12 +21,12 @@ class _DashboardState extends State<Dashboard> {
   Data _data;
   DateTime _lastUpdated;
 
-  static Map<Endpoint, String> _titles = {
-    Endpoint.cases: 'Cases',
-    Endpoint.casesSuspected: 'Suspected cases',
-    Endpoint.casesConfirmed: 'Confirmed cases',
-    Endpoint.deaths: 'Deaths',
-    Endpoint.recovered: 'Recovered',
+  static Map<Endpoint, CardData> _cardsData = {
+    Endpoint.cases: CardData('Cases', 'assets/count.png'),
+    Endpoint.casesSuspected: CardData('Suspected cases', 'assets/suspect.png'),
+    Endpoint.casesConfirmed: CardData('Confirmed cases', 'assets/fever.png'),
+    Endpoint.deaths: CardData('Deaths', 'assets/death.png'),
+    Endpoint.recovered: CardData('Recovered', 'assets/medicine.png'),
   };
 
   @override
@@ -69,7 +75,7 @@ class _DashboardState extends State<Dashboard> {
               LastUpdatedLabel(labelText: _formatLastUpdated(_lastUpdated)),
             for (var endpoint in Endpoint.values)
               APIResultCard(
-                title: _titles[endpoint],
+                cardData: _cardsData[endpoint],
                 value: _data != null ? _data.values[endpoint] : null,
               ),
           ],
@@ -96,8 +102,8 @@ class LastUpdatedLabel extends StatelessWidget {
 }
 
 class APIResultCard extends StatelessWidget {
-  const APIResultCard({Key key, this.title, this.value}) : super(key: key);
-  final String title;
+  const APIResultCard({Key key, this.cardData, this.value}) : super(key: key);
+  final CardData cardData;
   final int value;
 
   @override
@@ -106,19 +112,25 @@ class APIResultCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(title, style: Theme.of(context).textTheme.headline),
-              Expanded(child: Container()),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    value != null ? value.toString() : '',
-                    style: Theme.of(context).textTheme.display1,
-                  ),
-                ],
+              Text(cardData.title, style: Theme.of(context).textTheme.headline),
+              SizedBox(height: 4),
+              SizedBox(
+                height: 52,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Image.asset(cardData.assetName),
+                    Text(
+                      value != null ? value.toString() : '',
+                      style: Theme.of(context).textTheme.display1,
+                    ),
+                  ],
+                ),
               )
             ],
           ),
