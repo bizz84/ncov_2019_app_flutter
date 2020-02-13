@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ncov_2019_app_flutter/app/api/api.dart';
 
 class EndpointCardData {
-  EndpointCardData(this.title, this.assetName);
+  EndpointCardData(this.title, this.assetName, this.color);
   final String title;
   final String assetName;
+  final Color color;
 }
 
 class EndpointCard extends StatelessWidget {
@@ -13,13 +14,16 @@ class EndpointCard extends StatelessWidget {
   final int value;
 
   static Map<Endpoint, EndpointCardData> _cardsData = {
-    Endpoint.cases: EndpointCardData('Cases', 'assets/count.png'),
-    Endpoint.casesSuspected:
-        EndpointCardData('Suspected cases', 'assets/suspect.png'),
-    Endpoint.casesConfirmed:
-        EndpointCardData('Confirmed cases', 'assets/fever.png'),
-    Endpoint.deaths: EndpointCardData('Deaths', 'assets/death.png'),
-    Endpoint.recovered: EndpointCardData('Recovered', 'assets/medicine.png'),
+    Endpoint.cases:
+        EndpointCardData('Cases', 'assets/count.png', Color(0xFFFFF492)),
+    Endpoint.casesSuspected: EndpointCardData(
+        'Suspected cases', 'assets/suspect.png', Color(0xFFEEDA28)),
+    Endpoint.casesConfirmed: EndpointCardData(
+        'Confirmed cases', 'assets/fever.png', Color(0xFFE99600)),
+    Endpoint.deaths:
+        EndpointCardData('Deaths', 'assets/death.png', Color(0xFFFF0000)),
+    Endpoint.recovered:
+        EndpointCardData('Recovered', 'assets/medicine.png', Color(0xFF00DB08)),
   };
 
   @override
@@ -34,17 +38,25 @@ class EndpointCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(cardData.title, style: Theme.of(context).textTheme.headline),
+              Text(
+                cardData.title,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline
+                    .copyWith(color: cardData.color),
+              ),
               SizedBox(height: 4),
               SizedBox(
                 height: 52,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Image.asset(cardData.assetName),
+                    Image.asset(cardData.assetName, color: cardData.color),
                     Text(
                       value != null ? value.toString() : '',
-                      style: Theme.of(context).textTheme.display1,
+                      style: Theme.of(context).textTheme.display1.copyWith(
+                          color: cardData.color, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
