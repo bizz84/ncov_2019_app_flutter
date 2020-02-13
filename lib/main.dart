@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ncov_2019_app_flutter/app/api/api.dart';
 import 'package:ncov_2019_app_flutter/app/api/api_repository.dart';
 import 'package:ncov_2019_app_flutter/app/api/api_service.dart';
-import 'package:ncov_2019_app_flutter/app/dashboard.dart';
+import 'package:ncov_2019_app_flutter/app/ui/dashboard.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
