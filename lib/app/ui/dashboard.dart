@@ -17,6 +17,7 @@ class _DashboardState extends State<Dashboard> {
 
   Data _data;
   DateTime _lastUpdated;
+  bool _refreshInProgress = false;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> _updateData() async {
     try {
+      setState(() => _refreshInProgress = true);
       final apiRepository = Provider.of<APIRepository>(context, listen: false);
       final data = await apiRepository.getAllEndpointsData();
       setState(() {
@@ -49,13 +51,21 @@ class _DashboardState extends State<Dashboard> {
         content: 'Please try again later.',
         defaultActionText: 'OK',
       ).show(context);
+    } finally {
+      setState(() => _refreshInProgress = false);
     }
   }
 
-  String _formatLastUpdated(DateTime date) {
-    final formatter = DateFormat.jms();
-    final formatted = formatter.format(date);
-    return 'Last updated: $formatted';
+  String _lastUpdatedStatusText() {
+    if (_lastUpdated != null) {
+      final formatter = DateFormat.jms();
+      final formatted = formatter.format(_lastUpdated);
+      return 'Last updated: $formatted';
+    }
+    if (_refreshInProgress) {
+      return 'Loading...';
+    }
+    return '';
   }
 
   @override
@@ -69,8 +79,7 @@ class _DashboardState extends State<Dashboard> {
         onRefresh: _refresh,
         child: ListView(
           children: [
-            if (_lastUpdated != null)
-              LastUpdatedLabel(labelText: _formatLastUpdated(_lastUpdated)),
+            LastUpdatedStatusLabel(labelText: _lastUpdatedStatusText()),
             for (var endpoint in Endpoint.values)
               EndpointCard(
                 endpoint: endpoint,
@@ -83,8 +92,8 @@ class _DashboardState extends State<Dashboard> {
   }
 }
 
-class LastUpdatedLabel extends StatelessWidget {
-  const LastUpdatedLabel({Key key, this.labelText}) : super(key: key);
+class LastUpdatedStatusLabel extends StatelessWidget {
+  const LastUpdatedStatusLabel({Key key, this.labelText}) : super(key: key);
   final String labelText;
 
   @override
