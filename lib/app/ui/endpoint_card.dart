@@ -23,7 +23,7 @@ class EndpointCard extends StatelessWidget {
     Endpoint.deaths:
         EndpointCardData('Deaths', 'assets/death.png', Color(0xFFE40000)),
     Endpoint.recovered:
-        EndpointCardData('Recovered', 'assets/medicine.png', Color(0xFF70A901)),
+        EndpointCardData('Recovered', 'assets/patient.png', Color(0xFF70A901)),
   };
 
   @override
