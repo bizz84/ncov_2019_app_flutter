@@ -1,7 +1,6 @@
-# REST Client tests on https://github.com/tronalddump-io/tronald-app
 
-# POST {{baseUrl}}/token?grant_type=client_credentials
-# Authorization: Basic {{authorization}}
+POST {{baseUrl}}/token?grant_type=client_credentials
+Authorization: Basic {{authorization}}
 
 GET {{baseUrl}}/t/nubentos.com/ncovapi/1.0.0/cases
 Accept: application/json
