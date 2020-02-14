@@ -3,7 +3,9 @@ import 'package:intl/intl.dart';
 import 'package:ncov_2019_app_flutter/app/api/api.dart';
 import 'package:ncov_2019_app_flutter/app/api/api_repository.dart';
 import 'package:ncov_2019_app_flutter/app/ui/endpoint_card.dart';
+import 'package:ncov_2019_app_flutter/app/ui/platform_alert_dialog.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
 
 class Dashboard extends StatefulWidget {
   @override
@@ -35,9 +37,18 @@ class _DashboardState extends State<Dashboard> {
         _data = data;
         _lastUpdated = DateTime.now();
       });
-    } catch (e) {
-      // TODO: Show alert
-      print(e);
+    } on SocketException catch (_) {
+      PlatformAlertDialog(
+        title: 'Connection Error',
+        content: 'Could not retrieve data. Please try again later.',
+        defaultActionText: 'OK',
+      ).show(context);
+    } catch (_) {
+      PlatformAlertDialog(
+        title: 'Unknown Error',
+        content: 'Please try again later.',
+        defaultActionText: 'OK',
+      ).show(context);
     }
   }
 

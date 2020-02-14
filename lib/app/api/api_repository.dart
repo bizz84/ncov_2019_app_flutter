@@ -1,5 +1,7 @@
 import 'package:ncov_2019_app_flutter/app/api/api.dart';
 import 'package:ncov_2019_app_flutter/app/api/api_service.dart';
+import 'package:http/http.dart';
+import 'dart:io';
 
 class Data {
   Data({this.values});
@@ -22,35 +24,36 @@ class APIRepository {
 
   String _token;
 
-  /// Get data for a single endpoint
-  Future<int> getEndpointData(Endpoint endpoint) async {
+  Future<T> getDataRefreshingToken<T>({Future<T> Function() onGetData}) async {
     if (_token == null) {
       _token = await apiService.getToken();
     }
     try {
-      return await apiService.getEndpointData(
-          token: _token, endpoint: endpoint);
-    } catch (e) {
+      return await onGetData();
+    } on SocketException catch (_) {
+      rethrow;
+    } on Response catch (response) {
       // if unauthorized, get token again
-      _token = await apiService.getToken();
-      return await apiService.getEndpointData(
-          token: _token, endpoint: endpoint);
+      if (response.statusCode == 401) {
+        _token = await apiService.getToken();
+        return await onGetData();
+      }
+      rethrow;
     }
   }
 
+  /// Get data for a single endpoint
+  Future<int> getEndpointData(Endpoint endpoint) async =>
+      await getDataRefreshingToken<int>(
+        onGetData: () =>
+            apiService.getEndpointData(token: _token, endpoint: endpoint),
+      );
+
   /// Get data for all endpoints
-  Future<Data> getAllEndpointsData() async {
-    if (_token == null) {
-      _token = await apiService.getToken();
-    }
-    try {
-      return await _getAllData();
-    } catch (e) {
-      // if unauthorized, get token again
-      _token = await apiService.getToken();
-      return await _getAllData();
-    }
-  }
+  Future<Data> getAllEndpointsData() async =>
+      await getDataRefreshingToken<Data>(
+        onGetData: () => _getAllData(),
+      );
 
   Future<Data> _getAllData() async {
     final results = await Future.wait([
