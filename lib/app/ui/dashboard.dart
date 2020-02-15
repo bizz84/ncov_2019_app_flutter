@@ -56,9 +56,18 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  DateFormat dateFormatter() {
+    final now = DateTime.now();
+    return now.year == _lastUpdated.year &&
+            now.month == _lastUpdated.month &&
+            now.day == _lastUpdated.day
+        ? DateFormat.Hms()
+        : DateFormat.yMd().add_Hms();
+  }
+
   String _lastUpdatedStatusText() {
     if (_lastUpdated != null) {
-      final formatter = DateFormat.jms();
+      final formatter = dateFormatter();
       final formatted = formatter.format(_lastUpdated);
       return 'Last updated: $formatted';
     }
