@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:ncov_2019_app_flutter/app/api/api.dart';
 import 'package:ncov_2019_app_flutter/app/api/api_repository.dart';
 import 'package:ncov_2019_app_flutter/app/ui/endpoint_card.dart';
+import 'package:ncov_2019_app_flutter/app/ui/last_updated_status_label.dart';
 import 'package:ncov_2019_app_flutter/app/ui/platform_alert_dialog.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
@@ -56,29 +56,10 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  DateFormat dateFormatter() {
-    final now = DateTime.now();
-    return now.year == _lastUpdated.year &&
-            now.month == _lastUpdated.month &&
-            now.day == _lastUpdated.day
-        ? DateFormat.Hms()
-        : DateFormat.yMd().add_Hms();
-  }
-
-  String _lastUpdatedStatusText() {
-    if (_lastUpdated != null) {
-      final formatter = dateFormatter();
-      final formatted = formatter.format(_lastUpdated);
-      return 'Last updated: $formatted';
-    }
-    if (_refreshInProgress) {
-      return 'Loading...';
-    }
-    return '';
-  }
-
   @override
   Widget build(BuildContext context) {
+    final formatter = LastUpdatedDateFormatter(
+        lastUpdated: _lastUpdated, refreshInProgress: _refreshInProgress);
     return Scaffold(
       appBar: AppBar(
         title: Text('nCoV 2019 Tracker'),
@@ -88,7 +69,8 @@ class _DashboardState extends State<Dashboard> {
         onRefresh: _refresh,
         child: ListView(
           children: [
-            LastUpdatedStatusLabel(labelText: _lastUpdatedStatusText()),
+            LastUpdatedStatusLabel(
+                labelText: formatter.lastUpdatedStatusText()),
             for (var endpoint in Endpoint.values)
               EndpointCard(
                 endpoint: endpoint,
@@ -96,22 +78,6 @@ class _DashboardState extends State<Dashboard> {
               ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class LastUpdatedStatusLabel extends StatelessWidget {
-  const LastUpdatedStatusLabel({Key key, this.labelText}) : super(key: key);
-  final String labelText;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        labelText,
-        textAlign: TextAlign.center,
       ),
     );
   }
