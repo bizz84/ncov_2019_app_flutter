@@ -11,24 +11,17 @@ enum Endpoint {
 
 /// Uri builder class for the nCoV 2019 API
 class API {
-  API({
-    @required this.baseUrl,
-    @required this.baseAPIPath,
-    @required this.port,
-    @required this.apiKey,
-  });
-  final String baseUrl;
-  final String baseAPIPath;
-  final int port;
+  API({@required this.apiKey});
   final String apiKey;
+  static final String baseUrl = "apigw.nubentos.com";
+  static final String baseAPIPath = "t/nubentos.com/ncovapi/1.0.0";
+  static final int port = 443;
 
   factory API.production() {
-    return API(
-      baseUrl: "apigw.nubentos.com",
-      baseAPIPath: "t/nubentos.com/ncovapi/1.0.0",
-      port: 443,
-      apiKey: APIKeys.ncovAuthorizationKey,
-    );
+    return API(apiKey: APIKeys.ncovProductionKey);
+  }
+  factory API.sandbox() {
+    return API(apiKey: APIKeys.ncovSandboxKey);
   }
 
   Uri tokenUri() => Uri(

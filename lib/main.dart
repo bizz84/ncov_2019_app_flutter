@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider<APIRepository>(
-      create: (_) => APIRepository(APIService(API.production())),
+      create: (_) => APIRepository(APIService(API.sandbox())),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
