@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ncov_2019_app_flutter/app/api/api.dart';
+import 'package:ncov_2019_app_flutter/app/services/api.dart';
 
 class EndpointCardData {
   EndpointCardData(this.title, this.assetName, this.color);

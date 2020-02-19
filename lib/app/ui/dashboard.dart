@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ncov_2019_app_flutter/app/api/api.dart';
+import 'package:ncov_2019_app_flutter/app/services/api.dart';
+import 'package:ncov_2019_app_flutter/app/repositories/data.dart';
 import 'package:ncov_2019_app_flutter/app/repositories/data_repository.dart';
 import 'package:ncov_2019_app_flutter/app/ui/endpoint_card.dart';
 import 'package:ncov_2019_app_flutter/app/ui/last_updated_status_label.dart';
@@ -21,6 +22,8 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    final dataRepository = Provider.of<DataRepository>(context, listen: false);
+    _data = dataRepository.getAllEndpointsCachedData();
     _updateData();
   }
 

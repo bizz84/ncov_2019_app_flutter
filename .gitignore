@@ -96,4 +96,4 @@ ios/Runner/GoogleService-Info.plist
 android/app/google-services.json
 
 # API Keys
-lib/app/api/api_keys.dart
+lib/app/services/api_keys.dart
