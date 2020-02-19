@@ -1,27 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:ncov_2019_app_flutter/app/api/api.dart';
 import 'package:ncov_2019_app_flutter/app/api/api_service.dart';
 import 'package:http/http.dart';
+import 'package:ncov_2019_app_flutter/app/repositories/data.dart';
+import 'package:ncov_2019_app_flutter/app/repositories/data_cache_service.dart';
 import 'dart:io';
 
-class Data {
-  Data({this.values, this.updateTime});
-
-  final Map<Endpoint, int> values;
-  int get cases => values[Endpoint.cases];
-  int get casesSuspected => values[Endpoint.casesSuspected];
-  int get casesConfirmed => values[Endpoint.casesConfirmed];
-  int get deaths => values[Endpoint.deaths];
-  int get recovered => values[Endpoint.recovered];
-
-  final DateTime updateTime;
-  @override
-  String toString() =>
-      'cases: $cases, suspected: $casesSuspected, confirmed: $casesConfirmed, deaths: $deaths, recovered: $recovered';
-}
-
 class DataRepository {
-  DataRepository(this.apiService);
+  DataRepository({@required this.apiService, @required this.dataCacheService});
   final APIService apiService;
+  final DataCacheService dataCacheService;
 
   String _token;
 
@@ -51,10 +39,16 @@ class DataRepository {
       );
 
   /// Get data for all endpoints
-  Future<Data> getAllEndpointsData() async =>
-      await getDataRefreshingToken<Data>(
-        onGetData: () => _getAllData(),
-      );
+  Future<Data> getAllEndpointsData() async {
+    final data = await getDataRefreshingToken<Data>(
+      onGetData: () => _getAllData(),
+    );
+    // save to cache
+    await dataCacheService.setData(data);
+    return data;
+  }
+
+  Data getAllEndpointsCachedData() => dataCacheService.getData();
 
   Future<Data> _getAllData() async {
     final results = await Future.wait([
