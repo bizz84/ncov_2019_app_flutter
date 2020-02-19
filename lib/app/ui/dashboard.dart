@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ncov_2019_app_flutter/app/api/api.dart';
-import 'package:ncov_2019_app_flutter/app/api/api_repository.dart';
+import 'package:ncov_2019_app_flutter/app/repositories/data_repository.dart';
 import 'package:ncov_2019_app_flutter/app/ui/endpoint_card.dart';
 import 'package:ncov_2019_app_flutter/app/ui/last_updated_status_label.dart';
 import 'package:ncov_2019_app_flutter/app/ui/platform_alert_dialog.dart';
@@ -16,7 +16,6 @@ class _DashboardState extends State<Dashboard> {
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   Data _data;
-  DateTime _lastUpdated;
   bool _refreshInProgress = false;
 
   @override
@@ -33,12 +32,10 @@ class _DashboardState extends State<Dashboard> {
   Future<void> _updateData() async {
     try {
       setState(() => _refreshInProgress = true);
-      final apiRepository = Provider.of<APIRepository>(context, listen: false);
-      final data = await apiRepository.getAllEndpointsData();
-      setState(() {
-        _data = data;
-        _lastUpdated = DateTime.now();
-      });
+      final dataRepository =
+          Provider.of<DataRepository>(context, listen: false);
+      final data = await dataRepository.getAllEndpointsData();
+      setState(() => _data = data);
     } on SocketException catch (_) {
       PlatformAlertDialog(
         title: 'Connection Error',
@@ -59,10 +56,10 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     final formatter = LastUpdatedDateFormatter(
-        lastUpdated: _lastUpdated, refreshInProgress: _refreshInProgress);
+        lastUpdated: _data?.updateTime, refreshInProgress: _refreshInProgress);
     return Scaffold(
       appBar: AppBar(
-        title: Text('nCoV 2019 Tracker'),
+        title: Text('Coronavirus Tracker'),
       ),
       body: RefreshIndicator(
         key: _refreshIndicatorKey,

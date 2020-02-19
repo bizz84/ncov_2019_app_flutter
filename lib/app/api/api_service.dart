@@ -20,7 +20,6 @@ class APIService {
       if (accessToken != null) {
         return accessToken;
       }
-      // else expired?
     }
     print(
         'Request ${api.tokenUri()} failed\nResponse: ${response.statusCode} ${response.reasonPhrase}');

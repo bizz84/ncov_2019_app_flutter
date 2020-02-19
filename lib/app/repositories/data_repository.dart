@@ -4,7 +4,7 @@ import 'package:http/http.dart';
 import 'dart:io';
 
 class Data {
-  Data({this.values});
+  Data({this.values, this.updateTime});
 
   final Map<Endpoint, int> values;
   int get cases => values[Endpoint.cases];
@@ -13,13 +13,14 @@ class Data {
   int get deaths => values[Endpoint.deaths];
   int get recovered => values[Endpoint.recovered];
 
+  final DateTime updateTime;
   @override
   String toString() =>
       'cases: $cases, suspected: $casesSuspected, confirmed: $casesConfirmed, deaths: $deaths, recovered: $recovered';
 }
 
-class APIRepository {
-  APIRepository(this.apiService);
+class DataRepository {
+  DataRepository(this.apiService);
   final APIService apiService;
 
   String _token;
@@ -65,12 +66,15 @@ class APIRepository {
       apiService.getEndpointData(token: _token, endpoint: Endpoint.deaths),
       apiService.getEndpointData(token: _token, endpoint: Endpoint.recovered),
     ]);
-    return Data(values: {
-      Endpoint.cases: results[0],
-      Endpoint.casesSuspected: results[1],
-      Endpoint.casesConfirmed: results[2],
-      Endpoint.deaths: results[3],
-      Endpoint.recovered: results[4],
-    });
+    return Data(
+      values: {
+        Endpoint.cases: results[0],
+        Endpoint.casesSuspected: results[1],
+        Endpoint.casesConfirmed: results[2],
+        Endpoint.deaths: results[3],
+        Endpoint.recovered: results[4],
+      },
+      updateTime: DateTime.now(),
+    );
   }
 }
