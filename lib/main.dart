@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 //import 'package:intl/intl.dart';
 import 'package:ncov_2019_app_flutter/app/services/api.dart';
-import 'package:ncov_2019_app_flutter/app/repositories/data_cache_service.dart';
+import 'package:ncov_2019_app_flutter/app/services/data_cache_service.dart';
 import 'package:ncov_2019_app_flutter/app/repositories/data_repository.dart';
 import 'package:ncov_2019_app_flutter/app/services/api_service.dart';
 import 'package:ncov_2019_app_flutter/app/ui/dashboard.dart';

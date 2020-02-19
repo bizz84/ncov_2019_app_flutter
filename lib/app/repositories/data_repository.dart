@@ -3,7 +3,7 @@ import 'package:ncov_2019_app_flutter/app/services/api.dart';
 import 'package:ncov_2019_app_flutter/app/services/api_service.dart';
 import 'package:http/http.dart';
 import 'package:ncov_2019_app_flutter/app/repositories/data.dart';
-import 'package:ncov_2019_app_flutter/app/repositories/data_cache_service.dart';
+import 'package:ncov_2019_app_flutter/app/services/data_cache_service.dart';
 import 'dart:io';
 
 class DataRepository {
