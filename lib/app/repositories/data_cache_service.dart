@@ -15,8 +15,9 @@ class DataCacheService {
       values[endpoint] = sharedPreferences.getInt(endpoint.toString());
     });
     final microsecondsSinceEpoch = sharedPreferences.getInt(lastUpdatedKey);
-    final lastUpdated =
-        DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch);
+    final lastUpdated = microsecondsSinceEpoch != null
+        ? DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch)
+        : null;
     if (values.isNotEmpty && lastUpdated != null) {
       return Data(values: values, updateTime: lastUpdated);
     }
