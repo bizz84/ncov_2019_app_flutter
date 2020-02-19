@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:ncov_2019_app_flutter/app/api/api_keys.dart';
+import 'package:ncov_2019_app_flutter/app/services/api_keys.dart';
 
 enum Endpoint {
   cases,

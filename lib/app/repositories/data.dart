@@ -1,4 +1,4 @@
-import 'package:ncov_2019_app_flutter/app/api/api.dart';
+import 'package:ncov_2019_app_flutter/app/services/api.dart';
 
 class Data {
   Data({this.values, this.updateTime});

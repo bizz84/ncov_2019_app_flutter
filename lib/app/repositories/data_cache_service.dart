@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:ncov_2019_app_flutter/app/api/api.dart';
+import 'package:ncov_2019_app_flutter/app/services/api.dart';
 import 'package:ncov_2019_app_flutter/app/repositories/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:ncov_2019_app_flutter/app/api/api.dart';
+import 'package:ncov_2019_app_flutter/app/services/api.dart';
 
 /// Network service layer. Calls API methods and parses responses.
 class APIService {
