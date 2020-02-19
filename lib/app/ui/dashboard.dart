@@ -24,7 +24,7 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     final dataRepository = Provider.of<DataRepository>(context, listen: false);
     _data = dataRepository.getAllEndpointsCachedData();
-    _updateData();
+    _updateData(showAlertOnError: false);
   }
 
   Future<void> _refresh() async {
@@ -32,7 +32,7 @@ class _DashboardState extends State<Dashboard> {
     await _updateData();
   }
 
-  Future<void> _updateData() async {
+  Future<void> _updateData({bool showAlertOnError = true}) async {
     try {
       setState(() => _refreshInProgress = true);
       final dataRepository =
@@ -40,17 +40,21 @@ class _DashboardState extends State<Dashboard> {
       final data = await dataRepository.getAllEndpointsData();
       setState(() => _data = data);
     } on SocketException catch (_) {
-      PlatformAlertDialog(
-        title: 'Connection Error',
-        content: 'Could not retrieve data. Please try again later.',
-        defaultActionText: 'OK',
-      ).show(context);
+      if (showAlertOnError) {
+        PlatformAlertDialog(
+          title: 'Connection Error',
+          content: 'Could not retrieve data. Please try again later.',
+          defaultActionText: 'OK',
+        ).show(context);
+      }
     } catch (_) {
-      PlatformAlertDialog(
-        title: 'Unknown Error',
-        content: 'Please try again later.',
-        defaultActionText: 'OK',
-      ).show(context);
+      if (showAlertOnError) {
+        PlatformAlertDialog(
+          title: 'Unknown Error',
+          content: 'Please try again later.',
+          defaultActionText: 'OK',
+        ).show(context);
+      }
     } finally {
       setState(() => _refreshInProgress = false);
     }
