@@ -13,8 +13,8 @@ enum Endpoint {
 class API {
   API({@required this.apiKey});
   final String apiKey;
-  static final String baseUrl = "apigw.nubentos.com";
-  static final String baseAPIPath = "t/nubentos.com/ncovapi/1.0.0";
+  static final String host = 'apigw.nubentos.com';
+  static final String baseAPIPath = 't/nubentos.com/ncovapi/1.0.0';
   static final int port = 443;
 
   factory API.production() {
@@ -25,16 +25,16 @@ class API {
   }
 
   Uri tokenUri() => Uri(
-        scheme: "https",
-        host: baseUrl,
+        scheme: 'https',
+        host: host,
         port: port,
         path: 'token',
-        queryParameters: {"grant_type": "client_credentials"},
+        queryParameters: {'grant_type': 'client_credentials'},
       );
 
   Uri endpointUri(Endpoint endpoint) => Uri(
-        scheme: "https",
-        host: baseUrl,
+        scheme: 'https',
+        host: host,
         port: port,
         path: '$baseAPIPath/${_paths[endpoint]}',
       );
