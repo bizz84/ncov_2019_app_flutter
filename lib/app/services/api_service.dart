@@ -8,7 +8,7 @@ class APIService {
   APIService(this.api);
   final API api;
 
-  Future<String> getToken() async {
+  Future<String> getAccessToken() async {
     final response = await http.post(
       api.tokenUri().toString(),
       headers: {'Authorization': 'Basic ${api.apiKey}'},

@@ -14,17 +14,17 @@ class DataRepository {
   String _token;
 
   Future<T> getDataRefreshingToken<T>({Future<T> Function() onGetData}) async {
-    if (_token == null) {
-      _token = await apiService.getToken();
-    }
     try {
+      if (_token == null) {
+        _token = await apiService.getAccessToken();
+      }
       return await onGetData();
     } on SocketException catch (_) {
       rethrow;
     } on Response catch (response) {
       // if unauthorized, get token again
       if (response.statusCode == 401) {
-        _token = await apiService.getToken();
+        _token = await apiService.getAccessToken();
         return await onGetData();
       }
       rethrow;

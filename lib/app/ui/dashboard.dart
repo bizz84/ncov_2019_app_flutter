@@ -14,8 +14,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-
   Data _data;
   bool _refreshInProgress = false;
 
@@ -25,11 +23,6 @@ class _DashboardState extends State<Dashboard> {
     final dataRepository = Provider.of<DataRepository>(context, listen: false);
     _data = dataRepository.getAllEndpointsCachedData();
     _updateData(showAlertOnError: false);
-  }
-
-  Future<void> _refresh() async {
-    _refreshIndicatorKey.currentState.show();
-    await _updateData();
   }
 
   Future<void> _updateData({bool showAlertOnError = true}) async {
@@ -69,8 +62,7 @@ class _DashboardState extends State<Dashboard> {
         title: Text('Coronavirus Tracker'),
       ),
       body: RefreshIndicator(
-        key: _refreshIndicatorKey,
-        onRefresh: _refresh,
+        onRefresh: _updateData,
         child: ListView(
           children: [
             LastUpdatedStatusLabel(
