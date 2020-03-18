@@ -1,7 +1,7 @@
 import 'package:ncov_2019_app_flutter/app/services/api.dart';
 
-class Data {
-  Data({this.values, this.updateTime});
+class EndpointsData {
+  EndpointsData({this.values, this.updateTime});
 
   final Map<Endpoint, int> values;
   int get cases => values[Endpoint.cases];

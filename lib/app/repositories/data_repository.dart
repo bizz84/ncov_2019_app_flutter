@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:ncov_2019_app_flutter/app/services/api.dart';
 import 'package:ncov_2019_app_flutter/app/services/api_service.dart';
 import 'package:http/http.dart';
-import 'package:ncov_2019_app_flutter/app/repositories/data.dart';
+import 'package:ncov_2019_app_flutter/app/repositories/endpoints_data.dart';
 import 'package:ncov_2019_app_flutter/app/services/data_cache_service.dart';
 import 'dart:io';
 
@@ -11,12 +11,12 @@ class DataRepository {
   final APIService apiService;
   final DataCacheService dataCacheService;
 
-  String _token;
+  String _accessToken;
 
-  Future<T> getDataRefreshingToken<T>({Future<T> Function() onGetData}) async {
+  Future<T> _getDataRefreshingToken<T>({Future<T> Function() onGetData}) async {
     try {
-      if (_token == null) {
-        _token = await apiService.getAccessToken();
+      if (_accessToken == null) {
+        _accessToken = await apiService.getAccessToken();
       }
       return await onGetData();
     } on SocketException catch (_) {
@@ -24,7 +24,7 @@ class DataRepository {
     } on Response catch (response) {
       // if unauthorized, get token again
       if (response.statusCode == 401) {
-        _token = await apiService.getAccessToken();
+        _accessToken = await apiService.getAccessToken();
         return await onGetData();
       }
       rethrow;
@@ -33,34 +33,37 @@ class DataRepository {
 
   /// Get data for a single endpoint
   Future<int> getEndpointData(Endpoint endpoint) async =>
-      await getDataRefreshingToken<int>(
-        onGetData: () =>
-            apiService.getEndpointData(token: _token, endpoint: endpoint),
+      await _getDataRefreshingToken<int>(
+        onGetData: () => apiService.getEndpointData(
+            accessToken: _accessToken, endpoint: endpoint),
       );
 
   /// Get data for all endpoints
-  Future<Data> getAllEndpointsData() async {
-    final data = await getDataRefreshingToken<Data>(
-      onGetData: () => _getAllData(),
+  Future<EndpointsData> getAllEndpointsData() async {
+    final data = await _getDataRefreshingToken<EndpointsData>(
+      onGetData: () => _getAllEndpointsData(),
     );
     // save to cache
     await dataCacheService.setData(data);
     return data;
   }
 
-  Data getAllEndpointsCachedData() => dataCacheService.getData();
+  EndpointsData getAllEndpointsCachedData() => dataCacheService.getData();
 
-  Future<Data> _getAllData() async {
+  Future<EndpointsData> _getAllEndpointsData() async {
     final results = await Future.wait([
-      apiService.getEndpointData(token: _token, endpoint: Endpoint.cases),
       apiService.getEndpointData(
-          token: _token, endpoint: Endpoint.casesSuspected),
+          accessToken: _accessToken, endpoint: Endpoint.cases),
       apiService.getEndpointData(
-          token: _token, endpoint: Endpoint.casesConfirmed),
-      apiService.getEndpointData(token: _token, endpoint: Endpoint.deaths),
-      apiService.getEndpointData(token: _token, endpoint: Endpoint.recovered),
+          accessToken: _accessToken, endpoint: Endpoint.casesSuspected),
+      apiService.getEndpointData(
+          accessToken: _accessToken, endpoint: Endpoint.casesConfirmed),
+      apiService.getEndpointData(
+          accessToken: _accessToken, endpoint: Endpoint.deaths),
+      apiService.getEndpointData(
+          accessToken: _accessToken, endpoint: Endpoint.recovered),
     ]);
-    return Data(
+    return EndpointsData(
       values: {
         Endpoint.cases: results[0],
         Endpoint.casesSuspected: results[1],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ncov_2019_app_flutter/app/services/api.dart';
-import 'package:ncov_2019_app_flutter/app/repositories/data.dart';
+import 'package:ncov_2019_app_flutter/app/repositories/endpoints_data.dart';
 import 'package:ncov_2019_app_flutter/app/repositories/data_repository.dart';
 import 'package:ncov_2019_app_flutter/app/ui/endpoint_card.dart';
 import 'package:ncov_2019_app_flutter/app/ui/last_updated_status_label.dart';
@@ -14,7 +14,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  Data _data;
+  EndpointsData _data;
   bool _refreshInProgress = false;
 
   @override

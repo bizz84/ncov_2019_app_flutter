@@ -28,13 +28,13 @@ class APIService {
   }
 
   Future<int> getEndpointData({
-    @required String token,
+    @required String accessToken,
     @required Endpoint endpoint,
   }) async {
     final uri = api.endpointUri(endpoint);
     final response = await http.get(
       uri.toString(),
-      headers: {'Authorization': 'Bearer $token'},
+      headers: {'Authorization': 'Bearer $accessToken'},
     );
     if (response.statusCode == 200) {
       final responseJsonKey = _responseJsonKeys[endpoint];

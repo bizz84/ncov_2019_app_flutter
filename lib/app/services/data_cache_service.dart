@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:ncov_2019_app_flutter/app/services/api.dart';
-import 'package:ncov_2019_app_flutter/app/repositories/data.dart';
+import 'package:ncov_2019_app_flutter/app/repositories/endpoints_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DataCacheService {
@@ -9,7 +9,7 @@ class DataCacheService {
 
   static const String lastUpdatedKey = 'lastUpdated';
 
-  Data getData() {
+  EndpointsData getData() {
     Map<Endpoint, int> values = {};
     Endpoint.values.forEach((endpoint) {
       values[endpoint] = sharedPreferences.getInt(endpoint.toString());
@@ -19,12 +19,12 @@ class DataCacheService {
         ? DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch)
         : null;
     if (values.isNotEmpty && lastUpdated != null) {
-      return Data(values: values, updateTime: lastUpdated);
+      return EndpointsData(values: values, updateTime: lastUpdated);
     }
     return null;
   }
 
-  Future<void> setData(Data data) async {
+  Future<void> setData(EndpointsData data) async {
     data.values.forEach((endpoint, value) async {
       await sharedPreferences.setInt(endpoint.toString(), value);
     });
