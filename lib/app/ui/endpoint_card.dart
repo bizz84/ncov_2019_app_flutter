@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ncov_2019_app_flutter/app/services/api.dart';
 
 class EndpointCardData {
@@ -25,6 +26,13 @@ class EndpointCard extends StatelessWidget {
     Endpoint.recovered:
         EndpointCardData('Recovered', 'assets/patient.png', Color(0xFF70A901)),
   };
+
+  String get formattedValue {
+    if (value == null) {
+      return '';
+    }
+    return NumberFormat('#,###,###,###').format(value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +62,7 @@ class EndpointCard extends StatelessWidget {
                   children: <Widget>[
                     Image.asset(cardData.assetName, color: cardData.color),
                     Text(
-                      value != null ? value.toString() : '',
+                      formattedValue,
                       style: Theme.of(context).textTheme.display1.copyWith(
                           color: cardData.color, fontWeight: FontWeight.w500),
                     ),
