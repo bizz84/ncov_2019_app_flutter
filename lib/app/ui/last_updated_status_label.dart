@@ -8,18 +8,9 @@ class LastUpdatedDateFormatter {
   final DateTime lastUpdated;
   final bool refreshInProgress;
 
-  DateFormat _dateFormatter() {
-    final now = DateTime.now();
-    return now.year == lastUpdated.year &&
-            now.month == lastUpdated.month &&
-            now.day == lastUpdated.day
-        ? DateFormat.Hms()
-        : DateFormat.yMd().add_Hms();
-  }
-
   String lastUpdatedStatusText() {
     if (lastUpdated != null) {
-      final formatter = _dateFormatter();
+      final formatter = DateFormat.yMd().add_Hms();
       final formatted = formatter.format(lastUpdated);
       return 'Last updated: $formatted';
     }
