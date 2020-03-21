@@ -1,34 +1,36 @@
 import 'package:flutter/foundation.dart';
 import 'package:ncov_2019_app_flutter/app/services/api.dart';
 import 'package:ncov_2019_app_flutter/app/repositories/endpoints_data.dart';
+import 'package:ncov_2019_app_flutter/app/services/endpoint_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DataCacheService {
   DataCacheService({@required this.sharedPreferences});
   final SharedPreferences sharedPreferences;
 
-  static const String lastUpdatedKey = 'lastUpdated';
+  static String endpointValueKey(Endpoint endpoint) => '$endpoint/value';
+  static String endpointDateKey(Endpoint endpoint) => '$endpoint/date';
 
   EndpointsData getData() {
-    Map<Endpoint, int> values = {};
+    Map<Endpoint, EndpointData> values = {};
     Endpoint.values.forEach((endpoint) {
-      values[endpoint] = sharedPreferences.getInt(endpoint.toString());
+      final value = sharedPreferences.getInt(endpointValueKey(endpoint));
+      final dateString = sharedPreferences.getString(endpointDateKey(endpoint));
+      if (value != null && dateString != null) {
+        final date = DateTime.tryParse(dateString);
+        values[endpoint] = EndpointData(value: value, date: date);
+      }
     });
-    final microsecondsSinceEpoch = sharedPreferences.getInt(lastUpdatedKey);
-    final lastUpdated = microsecondsSinceEpoch != null
-        ? DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch)
-        : null;
-    if (values.isNotEmpty && lastUpdated != null) {
-      return EndpointsData(values: values, updateTime: lastUpdated);
-    }
-    return null;
+    return EndpointsData(values: values);
   }
 
   Future<void> setData(EndpointsData data) async {
-    data.values.forEach((endpoint, value) async {
-      await sharedPreferences.setInt(endpoint.toString(), value);
+    data.values.forEach((endpoint, data) async {
+      await sharedPreferences.setInt(endpointValueKey(endpoint), data.value);
+      await sharedPreferences.setString(
+        endpointDateKey(endpoint),
+        data.date.toIso8601String(),
+      );
     });
-    await sharedPreferences.setInt(
-        lastUpdatedKey, data.updateTime.microsecondsSinceEpoch);
   }
 }

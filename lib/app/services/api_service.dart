@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:ncov_2019_app_flutter/app/services/api.dart';
+import 'package:ncov_2019_app_flutter/app/services/endpoint_data.dart';
 
 /// Network service layer. Calls API methods and parses responses.
 class APIService {
@@ -27,7 +29,7 @@ class APIService {
     throw response;
   }
 
-  Future<int> getEndpointData({
+  Future<EndpointData> getEndpointData({
     @required String accessToken,
     @required Endpoint endpoint,
   }) async {
@@ -42,9 +44,11 @@ class APIService {
       print('$data');
       if (data.isNotEmpty) {
         final Map<String, dynamic> items = data[0];
-        final int result = items[responseJsonKey];
-        if (result != null) {
-          return result;
+        final int value = items[responseJsonKey];
+        final String dateString = items['date'];
+        final date = DateTime.tryParse(dateString);
+        if (value != null) {
+          return EndpointData(value: value, date: date);
         }
       }
     }

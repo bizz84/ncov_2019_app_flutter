@@ -6,6 +6,8 @@ import 'package:ncov_2019_app_flutter/app/repositories/endpoints_data.dart';
 import 'package:ncov_2019_app_flutter/app/services/data_cache_service.dart';
 import 'dart:io';
 
+import 'package:ncov_2019_app_flutter/app/services/endpoint_data.dart';
+
 class DataRepository {
   DataRepository({@required this.apiService, @required this.dataCacheService});
   final APIService apiService;
@@ -32,8 +34,8 @@ class DataRepository {
   }
 
   /// Get data for a single endpoint
-  Future<int> getEndpointData(Endpoint endpoint) async =>
-      await _getDataRefreshingToken<int>(
+  Future<EndpointData> getEndpointData(Endpoint endpoint) async =>
+      await _getDataRefreshingToken<EndpointData>(
         onGetData: () => apiService.getEndpointData(
             accessToken: _accessToken, endpoint: endpoint),
       );
@@ -71,7 +73,6 @@ class DataRepository {
         Endpoint.deaths: results[3],
         Endpoint.recovered: results[4],
       },
-      updateTime: DateTime.now(),
     );
   }
 }
