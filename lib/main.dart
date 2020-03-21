@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 //import 'package:intl/intl.dart';
 import 'package:ncov_2019_app_flutter/app/services/api.dart';
@@ -11,6 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   //Intl.defaultLocale = 'en_GB';
   await initializeDateFormatting();
   final sharedPreferences = await SharedPreferences.getInstance();
